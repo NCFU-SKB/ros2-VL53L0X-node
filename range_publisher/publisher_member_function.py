@@ -40,7 +40,7 @@ class MinimalPublisher(Node):
         # Create a VL53L0X object
         #self.tof = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
                 
-        i2c = busio.I2C(board.SCL, board.SDA)
+        self.i2c = busio.I2C(board.SCL, board.SDA)
         self.vl53 = adafruit_vl53l0x.VL53L0X(i2c)
         
         self.vl53.measurement_timing_budget = 200000 # 0.2 sec

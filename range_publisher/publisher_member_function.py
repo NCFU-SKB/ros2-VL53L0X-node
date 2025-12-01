@@ -14,7 +14,7 @@
 
 import rclpy
 from rclpy.node import Node
-import VL53L0X 
+import adafruit_vl53l0x
 from sensor_msgs.msg import Range
 from std_msgs.msg import Header
 import time
@@ -28,33 +28,33 @@ class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('minimal_publisher')
         self.publisher_ = self.create_publisher(Range, 'rangeLidar', 10)
-        timer_period = 0.5  # seconds
+        timer_period = 0.3  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
         
         # Create a VL53L0X object
-        self.tof = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
-        # I2C Address can change before tof.open()
-        # tof.change_address(0x32)
-        self.tof.open()
-        # Start ranging
-        self.tof.start_ranging(VL53L0X.Vl53l0xAccuracyMode.LONG_RANGE)
+        #self.tof = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
+                
+        i2c = busio.I2C(board.SCL, board.SDA)
+        vl53 = adafruit_vl53l0x.VL53L0X(i2c)
+        
+        vl53.measurement_timing_budget = 200000 # 0.2 sec
+        
+        vl53.continuous_mode()
 
-    def __del__(self):
-        self.tof.stop_ranging()
-        self.tof.close()
+    #def __del__(self):
+    #    self.tof.stop_ranging()
+    #    self.tof.close()
 
 
     def timer_callback(self):
-        distance = self.tof.get_distance()
-
         msg = Range()
         msg.min_range = 0.02
         msg.max_range = 10
         msg.header = Header()
         msg.header.stamp  = time.time()
 
-        msg.range = distance
+        msg.range = vl53.range
 
         self.publisher_.publish(msg)
 

@@ -14,7 +14,11 @@
 
 import rclpy
 from rclpy.node import Node
+
 import adafruit_vl53l0x
+import board
+import busio
+
 from sensor_msgs.msg import Range
 from std_msgs.msg import Header
 import time

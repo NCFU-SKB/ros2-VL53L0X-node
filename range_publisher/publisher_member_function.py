@@ -41,11 +41,11 @@ class MinimalPublisher(Node):
         #self.tof = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
                 
         i2c = busio.I2C(board.SCL, board.SDA)
-        vl53 = adafruit_vl53l0x.VL53L0X(i2c)
+        self.vl53 = adafruit_vl53l0x.VL53L0X(i2c)
         
-        vl53.measurement_timing_budget = 200000 # 0.2 sec
+        self.vl53.measurement_timing_budget = 200000 # 0.2 sec
         
-        vl53.continuous_mode()
+        self.vl53.continuous_mode()
 
     #def __del__(self):
     #    self.tof.stop_ranging()
@@ -59,7 +59,7 @@ class MinimalPublisher(Node):
         msg.header = Header()
         msg.header.stamp  = time.time()
 
-        msg.range = vl53.range
+        msg.range = self.vl53.range
 
         self.publisher_.publish(msg)
 

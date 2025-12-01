@@ -55,12 +55,11 @@ class MinimalPublisher(Node):
     def timer_callback(self):
         msg = Range()
         msg.min_range = 0.02
-        msg.max_range = 10
+        msg.max_range = 1.5
         msg.header = Header()
-        msg.header.stamp  = time.time()
+        msg.header.stamp  = self.get_clock().now().to_msg()
 
-        msg.range = self.vl53.range
-
+        msg.range = float(self.vl53.range/1000.0)
         self.publisher_.publish(msg)
 
         
